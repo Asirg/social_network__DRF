@@ -1,0 +1,27 @@
+services:
+  site_backend:
+    build: ./
+    container_name: social_network_backend
+    command: bash -c "python3 /usr/src/app/manage.py migrate --noinput &&
+             python3 /usr/src/app/manage.py runserver 0.0.0.0:8000 "
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env
+    depends_on:
+      - site_db
+
+  site_db:
+    image: postgres:12.12-alpine
+    container_name: social_network_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=social-network
+
+volumes:
+  postgres_data:
